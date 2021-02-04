@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}Bonjour!{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        		<link href= "https://bootswatch.com/4/cyborg/bootstrap.css" rel="stylesheet">
+        {% block javascripts %}{% endblock %}
+    </head>
+    <body>
+    	<div class="container">
+        {% block body %}{% endblock %}
+      </div>
+        
+    </body>
+</html>
