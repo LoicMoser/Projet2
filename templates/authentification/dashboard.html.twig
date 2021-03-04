@@ -1,0 +1,10 @@
+{% extends 'Base.html.twig' %}
+
+{% block title %}Espace client{% endblock %}
+
+{% block body %}
+<br><br><br>
+	<h1> {{ controller_name}} </h1><br>
+	<h4> Compte : {{ app.session.get('prenomUtilisateur')}} {{ app.session.get('nomUtilisateur')}} </h4>
+	<h5> Id : {{ app.session.get('idUtilisateur')}} </h5>
+{% endblock %}

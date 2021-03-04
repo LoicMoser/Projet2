@@ -45,6 +45,11 @@ class Document
      */
     private $acces;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $nom;
+
     public function __construct()
     {
         $this->acces = new ArrayCollection();
@@ -129,6 +134,18 @@ class Document
                 $acce->setDocumentId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNom(): ?string
+    {
+        return $this->nom;
+    }
+
+    public function setNom(string $nom): self
+    {
+        $this->nom = $nom;
 
         return $this;
     }

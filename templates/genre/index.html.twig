@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello GenreController!{% endblock %}
+
+{% block body %}
+<form action="/insertGenre" method="post">
+  <fieldset>
+    <legend>Formulaire de création</legend>
+    <div class="form-group row">
+      <label for="staticNom" class="col-sm-2 col-form-label">Nom du genre</label>
+      <div class="col-sm-10">
+        <input type="text" class="form-control" id="staticNom" name="genre">
+      </div>
+    </div>
+  </fieldset>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}

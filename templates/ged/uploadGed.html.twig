@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Upload Document{% endblock %}
+
+{% block body %}
+	<style>
+    	.example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+   		.example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+	</style>
+
+	<div class="example-wrapper">
+    	<h2>Ajouter un document</h2>
+    <h5>{{ controller_name }}</h5>
+	</div>
+		<form action="/insertGed" method="post" enctype="multipart/form-data">
+  			<fieldset>
+    			<legend>Formulaire d'upload</legend>
+   				<div class="form-group row">
+      				<label for="staticNom" class="col-sm-2 col-form-label">Genre</label>
+      				<div class="col-sm-10">
+        				<select class="form-group" name="genre">
+        					{% for item in listeGenre %}
+        						<option value={{ item.id }}>{{ item.type }}>
+        					{% endfor %}
+        				</select>
+      				</div>
+      			</div>
+
+      			<div class="form-group row">
+      				<label for="staticPrenom" class="col-sm-2 col-form-label">Nom du document</label>
+      				<div class="col-sm-10">
+        				<input type="text" class="form-group" required name="nom">
+     				</div>
+     			</div>
+
+      			<div class="form-group row">
+      				<label for="staticPrenom" class="col-sm-2 col-form-label">Document</label>
+      				<div class="col-sm-10">
+        				<input type="file" class="form-group" id="boutonParcourir" name="fichier">
+     				</div>
+     			</div>
+
+     			<div class="form-group row">
+      				<label for="staticPrenom" class="col-sm-2 col-form-label">Visible</label>
+      				<div class="custom-control custom-switch">
+      					<input type="checkbox" class="custom-control-input" id="customSwitch1" checked="" name="choix">
+      					<label class="custom-control-label" for="customSwitch1">Actif/Inactif</label>
+    				</div>
+     			</div>
+     
+    </fieldset>
+   	<button type="submit" class="btn btn-primary">Upload</button>
+     </form>
+      
+{% endblock %}

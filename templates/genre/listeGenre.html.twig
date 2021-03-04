@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des genres{% endblock %}
+
+{% block body %}
+<h1>{{ controller_name }}</h1>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Type</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+	{% for item in listeGenre %}
+    <tr class="table">
+      <th scope="row">{{ item.id }}</th>
+      <td>{{ item.type }}</td>
+      <td> 
+		<a href="/deleteGenre/{{ item.id }}">
+			<i class="bi bi-trash-fill"></i>
+		</a> 
+    <a href="/updateGenre/{{ item.id }}">
+    <i class="bi bi-arrow-repeat"></i>
+    </a>
+	  </td>
+    </tr>
+	{% endfor %}
+  </tbody>
+</table>
+{% endblock %}
