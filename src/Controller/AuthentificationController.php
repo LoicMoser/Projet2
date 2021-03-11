@@ -60,18 +60,23 @@ class AuthentificationController extends AbstractController
     public function dashboard(Request $request, EntityManagerInterface $manager): Response
     {
     	$sess = $request->getSession();
-        return $this->render('authentification/dashboard.html.twig', [
-            'controller_name' => 'Espace client',
-        ]);
+        if($sess->get("idUtilisateur")){
+            return $this->render('authentification/dashboard.html.twig', [
+                'controller_name' => 'Espace client',
+            ]);
+        }else{
+            return $this->redirectToRoute('authentification');
+        }
     }
     /**
      * @Route("/deconnexion", name="deconnexion")
      */
     public function deconnexion(Request $request, EntityManagerInterface $manager): Response
     {
-    	$sess = $request->getSession();
-    	$sess->invalidate();
-        //$sess->clear();
+        $sess = $request->getSession();
+        $sess->remove("idUtilisateur");
+        $sess->invalidate();
+        $sess->clear();
         $sess=$request->getSession()->clear();
         return $this->redirectToRoute('authentification');
     }

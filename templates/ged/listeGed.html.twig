@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des documents{% endblock %}
+
+{% block body %}
+<h1>{{ controller_name }}</h1>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">Nom</th>
+      <th scope="col">Chemin</th>
+      <th scope="col">Date de création</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+	{% for item in listeGed %}
+    <tr class="table">
+      <td>{{ item.nom }}</td>
+      <td>{{ item.chemin }}</td>
+      <td>{{ item.createdat|date("d/m/Y") }}</td>
+    <td>
+    <a href="/deleteGed/{{ item.id }}">
+      <i class="bi bi-trash-fill"></i>
+    </a> 
+    <a href="/updateGed/{{ item.id }}">
+    <i class="bi bi-arrow-repeat"></i>
+    </a>
+    <a href="/downloadGed/{{ item.id }}">
+    <i class="bi bi-cloud-download"></i>
+    </a>
+    </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

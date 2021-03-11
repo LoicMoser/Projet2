@@ -7,7 +7,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use App\Entity\Utilisateur;
 use App\Entity\Genre;
+use App\Entity\Document;
 use Symfony\Component\HttpFoundation\Session\Session;
 
 class GenreController extends AbstractController
@@ -17,48 +19,74 @@ class GenreController extends AbstractController
      */
     public function insertGenre(Request $request, EntityManagerInterface $manager): Response
     {
-        $Genre = new Genre();
-        $Genre->setType($request->request->get('genre'));
+        $sess = $request->getSession();
+        if($sess->get("idUtilisateur")){
+            $Genre = new Genre();
+            $Genre->setType($request->request->get('genre'));
 
 
-        $manager->persist($Genre);
-        $manager->flush();
+            $manager->persist($Genre);
+            $manager->flush();
 
-        return $this->render('genre/index.html.twig', [
-            'controller_name' => 'Votre document a été envoyé',
-        ]);
+            return $this->render('genre/index.html.twig', [
+                'controller_name' => 'Votre document a été envoyé',
+            ]);
+        }else{
+            return $this->redirectToRoute('authentification');
+        }
     }
     /**
      * @Route("/formGenre", name="formGenre")
      */
     public function formGenre(Request $request, EntityManagerInterface $manager): Response
     {
-        
-        return $this->render('genre/index.html.twig', [
-            'controller_name' => 'Formulaire',
-        ]);
+        $sess = $request->getSession();
+        if($sess->get("idUtilisateur")){
+            return $this->render('genre/index.html.twig', [
+                'controller_name' => 'Formulaire',
+            ]);
+        }else{
+            return $this->redirectToRoute('authentification');
+        }
     }
     /**
      * @Route("/listeGenre", name="listeGenre")
      */
     public function listeGenre(Request $request, EntityManagerInterface $manager): Response
     {
-        //Requête pour récupérer toute la table genre
-        $listeGenre = $manager->getRepository(Genre::class)->findAll();
-        return $this->render('genre/listeGenre.html.twig', [
-            'controller_name' => 'Liste des genres',
-            'listeGenre' => $listeGenre,
-        ]);
+        $sess = $request->getSession();
+        if($sess->get("idUtilisateur")){
+            //Requête pour récupérer toute la table genre
+            $listeGenre = $manager->getRepository(Genre::class)->findAll();
+            return $this->render('genre/listeGenre.html.twig', [
+                'controller_name' => 'Liste des genres',
+                'listeGenre' => $listeGenre,
+            ]);
+        }else{
+            return $this->redirectToRoute('authentification');
+        }
     }
     /**
      * @Route("/deleteGenre/{id}", name="deleteGenre")
      */
     public function deleteGenre(Request $request, EntityManagerInterface $manager, Genre $id): Response
     {
-        //Suppression de l'objet qui a l'id passé en paramètre
-        $manager->remove($id);
-        $manager->flush();
-        return $this->redirectToRoute('listeGenre');
+        $sess = $request->getSession();
+        if($sess->get("idUtilisateur")){
+            $testGenre = $manager->getRepository(Document::class)->findByTypeId($id->getId());
+            if($testGenre){
+                $this->addFlash(
+                'notice',
+                'Ce genre ne peut pas être supprimé car il est attribué à un ou plusieurs document'
+                );
+            }else{
+                $manager->remove($id);
+                $manager->flush();
+            }
+            return $this->redirectToRoute('listeGenre');
+        }else{
+            return $this->redirectToRoute('authentification');
+        }
     }
 
     /**
@@ -66,14 +94,18 @@ class GenreController extends AbstractController
      */
     public function updateGenre(Request $request, EntityManagerInterface $manager, Genre $id): Response
     {
-    
         $sess = $request->getSession();
-        //Création de variable de session
-        $sess->set("idGenreModif", $id->getId());
-        return $this->render('genre/updateGenre.html.twig', [
-            'controller_name' => 'Mise à jour d un genre',
-            'genre'=>$id
-        ]);
+        if($sess->get("idUtilisateur")){
+            $sess = $request->getSession();
+            //Création de variable de session
+            $sess->set("idGenreModif", $id->getId());
+            return $this->render('genre/updateGenre.html.twig', [
+                'controller_name' => 'Mise à jour d un genre',
+                'genre'=>$id
+            ]);
+        }else{
+            return $this->redirectToRoute('authentification');
+        }
     }
 
     /**
@@ -81,14 +113,19 @@ class GenreController extends AbstractController
      */
     public function updateGenreBdd(Request $request, EntityManagerInterface $manager): Response
     {
-
         $sess = $request->getSession();
+        if($sess->get("idUtilisateur")){
+            $sess = $request->getSession();
 
-        $id=$sess->get("idGenreModif");
-        $genre=$manager->getRepository(Genre::class)->findOneById($id);
-        $genre->setType($request->request->get('nom'));
-        $manager->persist($genre);
-        $manager->flush();
-        return $this->redirectToRoute('listeGenre');
+            $id=$sess->get("idGenreModif");
+            $genre=$manager->getRepository(Genre::class)->findOneById($id);
+             if(!empty($request->request->get('nom')))
+                $genre->setType($request->request->get('nom'));
+            $manager->persist($genre);
+            $manager->flush();
+            return $this->redirectToRoute('listeGenre');
+        }else{
+            return $this->redirectToRoute('authentification');     
+        }
     }
 }
