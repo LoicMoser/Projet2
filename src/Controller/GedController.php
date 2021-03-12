@@ -60,7 +60,7 @@ class GedController extends AbstractController
 
             	$manager->persist($Document);
             	$manager->flush();
-
+            }
 
        
         	$listeGenre = $manager->getRepository(Genre::class)->findAll();
@@ -70,7 +70,6 @@ class GedController extends AbstractController
             ]);
         }else{
               return $this->redirectToRoute('authentification');  
-            }
         }
     }
 
@@ -100,9 +99,24 @@ class GedController extends AbstractController
         $sess = $request->getSession();
         if($sess->get("idUtilisateur")){
             //Suppression de l'objet qui a l'id passé en paramètre
-            $manager->remove($id);
-            $manager->flush();
-            return $this->redirectToRoute('listeGed');
+            $manager->getRepository(Document::class)->findOneById($id);
+            //suppression physique d'un document
+            if(unlink($this->getParameter('upload') . $id->getChemin())){
+                //suppression dans la base de donnée 
+                $manager->remove($id);
+                $manager->flush();
+                $this->addFlash(
+                    'true',
+                    'Le document à été supprimé'
+                    );
+                return $this->redirectToRoute('listeGed');
+            }else{
+                $this->addFlash(
+                    'false',
+                    'Ce document ne peut pas être supprimé'
+                    );
+                return $this->redirectToRoute('listeGed');
+            }
         }else{
             return $this->redirectToRoute('authentification');
         }
@@ -138,15 +152,49 @@ class GedController extends AbstractController
 
             $id=$sess->get("idGedModif");
             $ged=$manager->getRepository(Document::class)->findOneById($id);
-             if(!empty($request->request->get('nom')))
-                $ged->setNom($request->request->get('nom'));
             if(!empty($request->request->get('chemin')))
                 $ged->setChemin($request->request->get('chemin'));
+                rename(getChemin(), get('chemin'));
+             if(!empty($request->request->get('nom')))
+                $ged->setNom($request->request->get('nom'));
             if(!empty($request->request->get('actif')))
                 $ged->setActif($request->request->get('actif'));
             $manager->persist($ged);
             $manager->flush();
             return $this->redirectToRoute('listeGed');
+        }else{
+            return $this->redirectToRoute('authentification');
+        }
+    }
+
+    /**
+     * @Route("/downloadGed/{id}", name="downloadGed")
+     */
+    public function downloadGed(Request $request, EntityManagerInterface $manager, Document $id): Response
+    {
+        $sess = $request->getSession();
+        if($sess->get("idUtilisateur")){
+            
+            return $this->redirectToRoute('listeGed');
+        }else{
+            return $this->redirectToRoute('authentification');
+        }
+    }
+
+    /**
+     * @Route("/permission", name="permission")
+     */
+    public function permission(Request $request, EntityManagerInterface $manager, Document $id): Response
+    {
+        $sess = $request->getSession();
+        if($sess->get("idUtilisateur")){
+            $listeGed = $manager->getRepository(Document::class)->findAll();
+            $listeUser = $manager->getRepository(Utilisateur::class)->findAll();
+            return $this->render('ged/permission.html.twig', [
+                'controller_name' => 'Attribution d un permission',
+                'listeDocument' => $listeDocument,
+                'listeUser' => $listeUser,
+            ]);
         }else{
             return $this->redirectToRoute('authentification');
         }

@@ -45,7 +45,7 @@ class AuthentificationController extends AbstractController
          	$sess->set("idUtilisateur", $utilisateur->getId());
          	$sess->set("nomUtilisateur", $utilisateur->getNom());
          	$sess->set("prenomUtilisateur", $utilisateur->getPrenom());
-            return $this->redirectToRoute('dashboard');    
+            return $this->redirectToRoute('home');    
         }else{
              return $this->redirectToRoute('authentification');
         }
@@ -63,6 +63,21 @@ class AuthentificationController extends AbstractController
         if($sess->get("idUtilisateur")){
             return $this->render('authentification/dashboard.html.twig', [
                 'controller_name' => 'Espace client',
+            ]);
+        }else{
+            return $this->redirectToRoute('authentification');
+        }
+    }
+
+    /**
+     * @Route("/home", name="home")
+     */
+    public function home(Request $request, EntityManagerInterface $manager): Response
+    {
+        $sess = $request->getSession();
+        if($sess->get("idUtilisateur")){
+            return $this->render('authentification/home.html.twig', [
+                'controller_name' => 'Bienvenu dans le lolo drive',
             ]);
         }else{
             return $this->redirectToRoute('authentification');

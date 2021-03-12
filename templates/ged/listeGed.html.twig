@@ -4,6 +4,16 @@
 
 {% block body %}
 <h1>{{ controller_name }}</h1>
+{% for message in app.flashes('true') %}
+<div class="flash-notice alert alert-dismissible alert-warning">
+{{ message }}
+</div>
+{% endfor %}
+{% for message in app.flashes('false') %}
+<div class="flash-notice alert alert-dismissible alert-danger">
+{{ message }}
+</div>
+{% endfor %}
 <table class="table table-hover">
   <thead>
     <tr>
@@ -26,7 +36,7 @@
     <a href="/updateGed/{{ item.id }}">
     <i class="bi bi-arrow-repeat"></i>
     </a>
-    <a href="/downloadGed/{{ item.id }}">
+    <a href="/upload/{{ item.chemin}}" target=_blank>
     <i class="bi bi-cloud-download"></i>
     </a>
     </td>
