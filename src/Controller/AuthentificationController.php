@@ -51,9 +51,6 @@ class AuthentificationController extends AbstractController
         }else{
              return $this->redirectToRoute('authentification');
         }
-
-        dd($reponse);
-        return new response(1);
     }
 
     /**
