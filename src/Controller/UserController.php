@@ -14,7 +14,7 @@ class UserController extends AbstractController
     /**
      * @Route("/user", name="user")
      */
-    public function index(): Response
+    public function index(Request $request, EntityManagerInterface $manager): Response
     {
         $sess = $request->getSession();
         if($sess->get("idUtilisateur")){

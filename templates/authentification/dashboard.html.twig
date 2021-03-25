@@ -5,6 +5,13 @@
 {% block body %}
 <br><br><br>
 	<h1> {{ controller_name}} </h1><br>
+	<br>
 	<h4> Compte : {{ app.session.get('prenomUtilisateur')}} {{ app.session.get('nomUtilisateur')}} </h4>
 	<h5> Id : {{ app.session.get('idUtilisateur')}} </h5>
+	<br>
+	<hr>
+	<br>
+	Document présent sur votre drive : {{ nbDocument }}
+	<br>
+	Dernier document partagé :
 {% endblock %}

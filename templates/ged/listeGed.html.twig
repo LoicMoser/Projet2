@@ -3,45 +3,118 @@
 {% block title %}Liste des documents{% endblock %}
 
 {% block body %}
-<h1>{{ controller_name }}</h1>
-{% for message in app.flashes('true') %}
-<div class="flash-notice alert alert-dismissible alert-warning">
-{{ message }}
-</div>
-{% endfor %}
-{% for message in app.flashes('false') %}
-<div class="flash-notice alert alert-dismissible alert-danger">
-{{ message }}
-</div>
-{% endfor %}
-<table class="table table-hover">
-  <thead>
-    <tr>
-      <th scope="col">Nom</th>
-      <th scope="col">Chemin</th>
-      <th scope="col">Date de création</th>
-      <th scope="col">Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-	{% for item in listeGed %}
-    <tr class="table">
-      <td>{{ item.nom }}</td>
-      <td>{{ item.chemin }}</td>
-      <td>{{ item.createdat|date("d/m/Y") }}</td>
-    <td>
-    <a href="/deleteGed/{{ item.id }}">
-      <i class="bi bi-trash-fill"></i>
-    </a> 
-    <a href="/updateGed/{{ item.id }}">
-    <i class="bi bi-arrow-repeat"></i>
-    </a>
-    <a href="/upload/{{ item.chemin}}" target=_blank>
-    <i class="bi bi-cloud-download"></i>
-    </a>
-    </td>
-    </tr>
+  <br><br>
+  <center><h1>{{ controller_name }}</h1></center>
+  {% for message in app.flashes('true') %}
+  <div class="flash-notice alert alert-dismissible alert-warning">
+  {{ message }}
+  </div>
   {% endfor %}
-  </tbody>
-</table>
+  {% for message in app.flashes('false') %}
+  <div class="flash-notice alert alert-dismissible alert-danger">
+  {{ message }}
+  </div>
+  {% endfor %}
+  <table class="table table-hover">
+    <thead>
+      <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Type</th>
+      <th scope="col">Nom</th>
+      <th scope="col">Date</th>
+      <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in listeAcces %}
+        <!-- création de chaque modal -->
+        <div class="modal" id="exampleModal{{item.documentId.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModal{{item.documentId.id}}" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Partage du document {{ item.documentId.nom }}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <p>
+                <!-- début du formulaire de la modal -->
+                  <form action="/partageGed" method="post">
+                    <fieldset>
+                      <legend>Formulaire d'upload</legend>
+                      <div class="form-group row">
+                        <label for="staticNom" class="col-sm-4 col-form-label">Information</label>
+                        <input class="form-group" type="text" placeholder="{{ item.documentId.nom }}" name="doc" value="{{ item.documentId.id }}" readonly>
+                      </div>
+                      <div class="form-group row">
+                        <label for="staticNom" class="col-sm-4 col-form-label">Utilisateur</label>
+                        <div class="col-sm-8">
+                          <select class="form-group" name="utilisateur">
+                          <option class="form-group" value="-1"></option>
+                          {% for item in listeUsers %}
+                            <option class="form-group" value= {{ item.id }}>
+                              {{ item.nom }} {{ item.prenom }}
+                            </option>
+                          {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="staticNom" class="col-sm-4 col-form-label">Autorisation</label>
+                        <div class="col-sm-18">
+                          <select class="form-group" name="autorisation">
+                            {% for item in listeAutorisations %}
+                              <option class="form-group" value= {{ item.id }}>
+                                {% if item.ecriture == 1 %}
+                                    Ecriture
+                                  {% endif %}
+                                  {% if item.lecture == 1 %}
+                                    Lecture
+                                  {% else %}
+                                    Fichier protégé
+                                {% endif %}
+                              </option>
+                            {% endfor %}
+                          </select>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </form>
+                <!-- fin du formulaire de la modal -->
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Partager</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- fin de chaque modal -->
+        <tr class="table">
+          <th scope="row">{{ item.documentId.id }}</th>
+            <td>{{ item.documentId.typeId.type }}</td>
+            <td>{{ item.documentId.nom }}</td>
+            <td>{{ item.documentId.createdAt|date("d-m-y") }}</td>
+            <td>
+              <a href="/upload/{{ item.documentId.chemin }}" target="blank">
+                <i class="bi bi-download"></i>
+              </a>
+              {% if item.autorisationId.id == 1 %}
+                <a href="/deleteGed/{{ item.documentId.id }}">
+                  <i class="bi bi-trash"></i>
+                </a>
+                <a href="/updateGed/{{ item.id }}">
+                  <i class="bi bi-arrow-repeat"></i>
+                </a>
+                <a href="#exampleModal{{ item.documentId.id }}" data-toggle="modal" data-target="#exampleModal{{ item.documentId.id }}">
+                <i class="bi bi-share-fill"></i></a>
+              {% endif %}
+            </td>
+          </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <br><h5><a href="uploadGed"><font color=red>Uploader un document</font></a></h5><br>
 {% endblock %}
